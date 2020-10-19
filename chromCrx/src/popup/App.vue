@@ -1,8 +1,12 @@
 <template>
     <div id="app">
-        <el-tabs type="border-card">
-            <el-tab-pane label="阿里"><ali></ali></el-tab-pane>
-            <el-tab-pane label="淘宝"><taobao></taobao>  </el-tab-pane>
+        <el-tabs type="border-card" v-model="activeName">
+            <el-tab-pane label="阿里(搜图)" name="ali">
+                <ali></ali>
+            </el-tab-pane>
+            <el-tab-pane label="淘宝(搜图)" name="taobao">
+                <taobao></taobao>
+            </el-tab-pane>
         </el-tabs>
 
     </div>
@@ -10,9 +14,30 @@
 <script>
     import taobao from "src/popup/page/taobao.vue";
     import ali from "src/popup/page/ali.vue";
+    import {sendMsg} from '../utils'
+
     export default {
         name: 'app',
-        components: {taobao,ali}
+        components: {taobao, ali},
+        data() {
+            return {
+                activeName: 'ali'
+            };
+        },
+        created() {
+            // 获取页面host
+            let _this = this
+            sendMsg({type: 'check_host'}, function (response) {
+                if (response) {
+                    if (response.host.includes('taobao.com')) {
+                        _this.activeName = 'taobao'
+                    } else if (response.host.includes('1688.com')) {
+                        _this.activeName = "ali"
+                    }
+                }
+
+            })
+        }
     }
 </script>
 <style scoped>

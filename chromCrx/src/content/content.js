@@ -3,7 +3,7 @@ import de from "element-ui/src/locale/lang/de";
 import Axios from "axios";
 
 
-function filter_ali_data(params) {
+function ali_filter_data(params) {
     console.log('params', params)
 
     let gatherInfo = function (a) {
@@ -67,6 +67,12 @@ function filter_ali_data(params) {
     return {msg: 'ok', data: data}
 }
 
+function check_host() {
+    let data = {host: window.location.host}
+    console.log('host :', data)
+    return data
+}
+
 function test() {
     console.log("test 函数 执行 ...")
     Axios.post('http://localhost:8080/index').then(function (res) {
@@ -82,11 +88,13 @@ chrome.extension.onMessage.addListener(
         console.log('content 受到数据', request)
 
         // 处理数据
-        let res = undefined
+        let res
         if (request.type === 'test') {
             res = test()
-        } else if (request.type === 'filter_ali_data') {
-            res = filter_ali_data(request.params)
+        } else if (request.type === 'ali_filter_data') {
+            res = ali_filter_data(request.params)
+        } else if (request.type === 'check_host') {
+            res = check_host(request.params)
         }
 
         // 返回执行结果

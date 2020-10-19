@@ -29,8 +29,10 @@
   "dependencies": {
     "@babel/runtime": "^7.4.4",
     "axios": "^0.20.0",
+    "collect.js": "^4.28.4",
     "element-ui": "^2.13.2",
     "jquery": "^3.5.1",
+    "sweetalert2": "^10.6.1",
     "vue": "^2.6.10"
   }
 }

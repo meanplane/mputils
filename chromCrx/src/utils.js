@@ -11,15 +11,20 @@ function sendMsg(msg, responseFunc) {
     }); //end query
 }
 
-import Axios from "axios";
+import axios from "axios";
 
 // 向本地服务发送消息
 function axGet(url, params) {
-    return Axios.get(host + url, params)
+    // return axios.get(host + url, params)
+    return axios({
+        method: 'get',
+        url: host + url,
+        params: params
+    })
 }
 
 function axPost(url, params) {
-    return Axios.post(host + url, params)
+    return axios.post(host + url, params)
 }
 
 export {
