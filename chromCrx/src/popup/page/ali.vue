@@ -5,15 +5,6 @@
                 <el-card shadow="hover">
                     <div slot="header" class="clearfix">
                         <el-form label-width="80px">
-                            <el-form-item label="价格">
-                                <el-col :span="11">
-                                    <el-input placeholder="beginPrice" v-model="params.beginPrice"></el-input>
-                                </el-col>
-                                <el-col :span="2">-</el-col>
-                                <el-col :span="11">
-                                    <el-input placeholder="endPrice" v-model="params.endPrice"></el-input>
-                                </el-col>
-                            </el-form-item>
                             <el-form-item>
                                 <el-col :span="18"> &nbsp;</el-col>
                                 <el-col :span="6">
@@ -156,12 +147,7 @@
         data() {
             return {
                 activeNames: ['1'],
-                // count: 0,
                 tips: '',
-                params: {
-                    beginPrice: 1,
-                    endPrice: 999999999
-                },
                 filterPrice: 0,
                 data: [],
                 hisData: []
@@ -197,8 +183,9 @@
             },
             // 筛选
             filterAliData() {
+                console.log("ali here")
                 let _this = this
-                sendMsg({type: 'ali_filter_data', params: _this.params}, function (response) {
+                sendMsg({type: 'ali_filter_data'}, function (response) {
                     if (response) {
                         _this.data = response.data
                     }

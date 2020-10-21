@@ -3,9 +3,7 @@ import de from "element-ui/src/locale/lang/de";
 import Axios from "axios";
 
 
-function ali_filter_data(params) {
-    console.log('params', params)
-
+function ali_filter_data() {
     let gatherInfo = function (a) {
         let goodsUrl = $(a).find('div.img-container a').attr('href');
         let img = $(a).find('div.img-container div.img').attr('style');
@@ -47,21 +45,41 @@ function ali_filter_data(params) {
                 deal *= 10000
             }
 
-            // 过滤价格
-            if (parseFloat(price) < parseFloat(params.beginPrice) || parseFloat(price) > parseFloat(params.endPrice)) {
-                $(this).attr('style', 'display:none;')
-            } else {
-                deal = parseInt(deal)
-                // 收集数据 发送到页面
-                let info = gatherInfo(this)
-                info.price = price
-                info.deal = deal
-                data.push(info)
-            }
+            deal = parseInt(deal)
+            // 收集数据 发送到页面
+            let info = gatherInfo(this)
+            info.price = price
+            info.deal = deal
+            data.push(info)
 
         } else {
             $(this).attr('style', 'display:none;')
         }
+    })
+
+    return {msg: 'ok', data: data}
+}
+
+function taobao_filter_data() {
+
+    let data = []
+    //过滤没有成交的数据
+    $('div#imgsearch-itemlist div.item').each(function () {
+        let name = $(this).find('a.pic-link > img').attr('alt')
+
+        let price = $(this).find('div.price strong').text()
+        price = parseInt(price)
+
+        let dealCount = $(this).find('div.deal-cnt').text()
+        dealCount = parseInt(dealCount.replace('人付款', ''))
+
+        let shopName = $(this).find('div.shop > a.shopname').children('span').eq(1).text()
+        let location = $(this).find('div.location').text()
+        let shopUrl = 'https:' + $(this).find('div.shop > a.shopname').attr('href')
+        let img = 'https:' + $(this).find('a.pic-link > img').attr('data-src')
+        let goodsUrl = 'https:' + $(this).find('a.pic-link').attr('href')
+
+        data.push({img, name, goodsUrl, price, dealCount, shopName, shopUrl, location})
     })
 
     return {msg: 'ok', data: data}
@@ -92,9 +110,11 @@ chrome.extension.onMessage.addListener(
         if (request.type === 'test') {
             res = test()
         } else if (request.type === 'ali_filter_data') {
-            res = ali_filter_data(request.params)
+            res = ali_filter_data()
         } else if (request.type === 'check_host') {
             res = check_host(request.params)
+        } else if (request.type === 'taobao_filter_data') {
+            res = taobao_filter_data()
         }
 
         // 返回执行结果
