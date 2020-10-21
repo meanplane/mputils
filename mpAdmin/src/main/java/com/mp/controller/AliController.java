@@ -9,8 +9,10 @@ import com.mp.utils.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RestController
@@ -35,7 +37,7 @@ public class AliController {
 
             // 计算平均价格
             //求平均值
-            BigDecimal average = goodsInfos.stream().map(AliGoodsInfo::getPrice).reduce(BigDecimal.ZERO, BigDecimal::add)
+            BigDecimal average = goodsInfos.stream().map(AliGoodsInfo::getPrice).filter(Objects::nonNull).reduce(BigDecimal.ZERO, BigDecimal::add)
                     .divide(BigDecimal.valueOf(goodsInfos.size()), 2, BigDecimal.ROUND_HALF_UP);
             goods.setPrice(average);
 
