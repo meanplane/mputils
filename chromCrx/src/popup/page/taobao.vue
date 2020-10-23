@@ -167,7 +167,7 @@
                 }
             },
             test() {
-                sendMsg({type: 'test'})
+                sendMsg({type: 'test',params:'xxxx'})
             },
             viewImg(img) {
                 swal.fire({

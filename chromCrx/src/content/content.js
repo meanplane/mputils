@@ -2,7 +2,7 @@ import $ from 'jquery'
 import de from "element-ui/src/locale/lang/de";
 import Axios from "axios";
 
-
+// 阿里 搜图 筛选
 function ali_filter_data() {
     let gatherInfo = function (a) {
         let goodsUrl = $(a).find('div.img-container a').attr('href');
@@ -60,6 +60,7 @@ function ali_filter_data() {
     return {msg: 'ok', data: data}
 }
 
+// 淘宝 搜图 筛选
 function taobao_filter_data() {
 
     let data = []
@@ -91,8 +92,9 @@ function check_host() {
     return data
 }
 
-function test() {
-    console.log("test 函数 执行 ...")
+function test(param) {
+    console.log("test 函数 执行 ...", param)
+
     Axios.post('http://localhost:8080/index').then(function (res) {
         console.log(res);
     })
@@ -106,16 +108,8 @@ chrome.extension.onMessage.addListener(
         console.log('content 受到数据', request)
 
         // 处理数据
-        let res
-        if (request.type === 'test') {
-            res = test()
-        } else if (request.type === 'ali_filter_data') {
-            res = ali_filter_data()
-        } else if (request.type === 'check_host') {
-            res = check_host(request.params)
-        } else if (request.type === 'taobao_filter_data') {
-            res = taobao_filter_data()
-        }
+        let func = eval(request.type)
+        let res = func(request.params)
 
         // 返回执行结果
         if (sendResponse && res) {
