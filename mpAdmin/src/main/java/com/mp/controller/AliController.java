@@ -43,11 +43,10 @@ public class AliController {
 
             aliSearchMapper.insert(goods);
 
-            goodsInfos.forEach(g -> {
+            for (AliGoodsInfo g : goodsInfos) {
                 g.setGoodsId(goods.getId());
-                System.out.println(g);
                 aliGoodsMapper.insert(g);
-            });
+            }
 
         }
         return R.ok();
