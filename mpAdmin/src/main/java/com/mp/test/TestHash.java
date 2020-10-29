@@ -1,6 +1,10 @@
 package com.mp.test;
 
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.crypto.hash.Md5Hash;
+import org.apache.shiro.mgt.DefaultSecurityManager;
+import org.apache.shiro.subject.Subject;
 
 /**
  * Author: Xiaoer
@@ -9,12 +13,22 @@ import org.apache.shiro.crypto.hash.Md5Hash;
 public class TestHash {
 
     public static void main(String[] args) {
-        Md5Hash md5Hash = new Md5Hash();
-        md5Hash.setBytes("123".getBytes());
+        DefaultSecurityManager securityManager = new DefaultSecurityManager();
+        CustomerRealm realm = new CustomerRealm();
 
-        System.out.println(md5Hash.toHex());
-        System.out.println(md5Hash.toBase64());
-        System.out.println(md5Hash.toString());
+        // 设置realm使用hash凭证选择器
+
+
+        securityManager.setRealm(realm);
+
+        SecurityUtils.setSecurityManager(securityManager);
+
+
+        Subject subject = SecurityUtils.getSubject();
+
+        UsernamePasswordToken token = new UsernamePasswordToken("tom", "123");
+
+        subject.login(token);
 
     }
 }
