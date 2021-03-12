@@ -5,15 +5,24 @@ import com.mp.model.bean.AliGoodsInfo;
 import com.mp.model.bean.AliSearchGoods;
 import com.mp.model.bean.TaobaoGoodsInfo;
 import com.mp.model.bean.TaobaoSearchGoods;
+import com.mp.model.bean.vo.TitleWord;
+import com.mp.model.bean.vo.WordCount;
 import com.mp.model.mapper.AliGoodsMapper;
 import com.mp.model.mapper.AliSearchMapper;
 import com.mp.model.mapper.TaobaoGoodsMapper;
 import com.mp.model.mapper.TaobaoSearchMapper;
 import com.mp.utils.R;
+import org.ansj.domain.Result;
+import org.ansj.library.DicLibrary;
+import org.ansj.splitWord.analysis.DicAnalysis;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -67,6 +76,56 @@ public class TaobaoController {
         List<TaobaoSearchGoods> goods = taobaoSearchMapper.selectList(new QueryWrapper<TaobaoSearchGoods>().orderByDesc("id"));
         return R.ok(goods);
     }
+
+    @RequestMapping(value = "/title/words", method = RequestMethod.GET)
+    public R getTitleWords(@RequestParam("goodsId") Long goodsId) {
+        List<TaobaoGoodsInfo> goods = taobaoGoodsMapper
+                .selectList(new QueryWrapper<TaobaoGoodsInfo>().eq("goodsId", goodsId).orderByDesc("id"));
+        HashMap<String, Object> map = new HashMap<>();
+
+        // 原始分词信息
+        ArrayList<TitleWord> titleWords = new ArrayList<>();
+
+        // 统计分词数量
+        HashMap<String, Integer> wordsMap = new HashMap<>();
+
+        for (TaobaoGoodsInfo good : goods) {
+            TitleWord titleWord = new TitleWord();
+            Result ret = DicAnalysis.parse(good.getName());
+
+            titleWord.setName(good.getName());
+            String words = ret.toStringWithOutNature();
+            titleWord.setWord(words);
+            titleWords.add(titleWord);
+
+            //统计分词
+            String[] wordsList = StringUtils.split(words, ",");
+            for (String str : wordsList) {
+                Integer count = wordsMap.get(str);
+                if (count == null) {
+                    count = 0;
+                }
+
+                wordsMap.put(str, count + 1);
+            }
+        }
+        map.put("titleWords", titleWords);
+
+        ArrayList<WordCount> list = new ArrayList<>();
+        for (String s : wordsMap.keySet()) {
+            WordCount wordCount = new WordCount();
+            wordCount.setName(s);
+            wordCount.setCount(wordsMap.get(s));
+
+            list.add(wordCount);
+        }
+
+        map.put("wordsCount", list);
+
+
+        return R.ok(map);
+    }
+
 
     @RequestMapping(value = "/goods/history/delete", method = RequestMethod.GET)
     public R deleteHistoryGoods(@RequestParam("goodsId") Long goodsId) {

@@ -64,6 +64,7 @@
                         <el-table-column>
                             <template slot-scope="scope">
                                 <el-button-group>
+                                    <el-button size="mini" type="primary" @click="viewTitleWord(scope.row.id)">查看分词</el-button>
                                     <el-button size="mini" type="primary" @click="viewHistory(scope.row.id)">去查看</el-button>
                                     <el-button size="mini" type="danger" @click="deleteHistory(scope.row.id)">删除</el-button>
                                 </el-button-group>
@@ -133,6 +134,58 @@
                     </el-table>
                 </el-card>
             </el-collapse-item>
+            <el-collapse-item name="4">
+                <template slot="title">
+                    <el-tag>标题分词</el-tag>
+                </template>
+                <el-card shadow="hover">
+                    <div>
+                        <!--<el-col :span="10">共 {{filterTableData(data).length}} 条</el-col>-->
+                        <!--<el-col :span="12">-->
+                            <!--<el-input v-model="filterPrice">-->
+                                <!--<template slot="prepend">筛选价格大于 ( 0 取消筛选):</template>-->
+                            <!--</el-input>-->
+                        <!--</el-col>-->
+                    </div>
+                    <br>
+                    <el-col :span="18">
+                        <el-table
+                                :data="titleData"
+                                highlight-current-row
+                                style="width: 100%">
+
+                            <el-table-column
+                                    prop="name"
+                                    label="商品名">
+                            </el-table-column>
+
+                            <el-table-column
+                                    prop="word"
+                                    label="分词">
+                            </el-table-column>
+                        </el-table>
+                    </el-col>
+                    <el-col :span="6">
+                        <el-table
+                                :data="titleInfo"
+                                highlight-current-row
+                                style="width: 100%">
+
+                            <el-table-column
+                                    prop="name"
+                                    label="分词">
+                            </el-table-column>
+
+                            <el-table-column
+                                    prop="count"
+                                    label="次数"
+                                    :sortable="true">
+                            </el-table-column>
+                        </el-table>
+                    </el-col>
+
+                </el-card>
+            </el-collapse-item>
 
         </el-collapse>
     </div>
@@ -151,7 +204,9 @@
                 tips: '',
                 filterPrice: 0,
                 data: [],
-                hisData: []
+                hisData: [],
+                titleData: [],
+                titleInfo: []
             };
         },
         methods: {
@@ -167,7 +222,7 @@
                 }
             },
             test() {
-                sendMsg({type: 'test',params:'xxxx'})
+                sendMsg({type: 'test', params: 'xxxx'})
             },
             viewImg(img) {
                 swal.fire({
@@ -219,6 +274,18 @@
                     }
                 })
 
+            },
+
+            // 查看分词
+            viewTitleWord(goodsId) {
+                this.changeCollapse(4)
+                axGet('taobao/title/words', {goodsId}).then(res => {
+                    if (res.data && res.data.data) {
+                        console.log(res.data.data);
+                        this.titleData = res.data.data.titleWords;
+                        this.titleInfo = res.data.data.wordsCount;
+                    }
+                })
             },
 
             // 筛选表格价格

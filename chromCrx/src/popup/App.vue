@@ -42,7 +42,7 @@
 </script>
 <style scoped>
     #app {
-        width: 780px;
+        width: 1080px;
         height: auto;
         font-family: 'Avenir', Helvetica, Arial, sans-serif;
         -webkit-font-smoothing: antialiased;

@@ -1,10 +1,7 @@
 package com.mp.test;
 
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.crypto.hash.Md5Hash;
-import org.apache.shiro.mgt.DefaultSecurityManager;
-import org.apache.shiro.subject.Subject;
+import org.ansj.domain.Result;
+import org.ansj.splitWord.analysis.DicAnalysis;
 
 /**
  * Author: Xiaoer
@@ -12,23 +9,16 @@ import org.apache.shiro.subject.Subject;
  */
 public class TestHash {
 
-    public static void main(String[] args) {
-        DefaultSecurityManager securityManager = new DefaultSecurityManager();
-        CustomerRealm realm = new CustomerRealm();
+    public static void main(String[] args) throws Exception {
+        String str = "HXXXXS恶搞康康包轻奢潮牌真皮小号豆腐包女包单肩斜挎包";
+        Result ret = DicAnalysis.parse(str);
+        System.out.println("=============\n\n");
+//        System.out.println("ToAnalysis "+ToAnalysis.parse(str));
+        System.out.println("DicAnalysis "+ret);
+//        System.out.println("IndexAnalysis "+IndexAnalysis.parse(str));
+//        System.out.println("NlpAnalysis" +NlpAnalysis.parse(str));
+        System.out.println("\n\n=============");
 
-        // 设置realm使用hash凭证选择器
-
-
-        securityManager.setRealm(realm);
-
-        SecurityUtils.setSecurityManager(securityManager);
-
-
-        Subject subject = SecurityUtils.getSubject();
-
-        UsernamePasswordToken token = new UsernamePasswordToken("tom", "123");
-
-        subject.login(token);
 
     }
 }
